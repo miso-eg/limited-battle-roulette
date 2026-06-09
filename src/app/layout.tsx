@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "TikTok LIVE向け限定バトルルール抽選アプリ",
 };
 
-const APP_VERSION = "Ver：2026/05/31-1";
+const APP_VERSION = "Ver：2026/06/09-1";
 const APP_CREDIT = "作成：みそ🎨🐾 @miso_eg";
 
 export default function RootLayout({

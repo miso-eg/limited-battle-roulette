@@ -209,6 +209,13 @@ export default function Home() {
             {isRolling ? '抽選中...' : '抽選する'}
           </button>
 
+          <a
+            href="/rules"
+            className="mt-3 block text-center text-sm text-zinc-400 underline"
+          >
+            登録ルール一覧を見る
+          </a>
+
           {error && (
             <p className="mt-4 rounded-xl bg-red-500/20 p-3 text-sm text-red-200">
               {error}
