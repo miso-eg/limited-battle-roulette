@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 限定バトル ルール抽選
 
-## Getting Started
+TikTok LIVEの限定バトルで使用するルールをカテゴリ別に抽選するアプリです。
+Next.jsの静的エクスポートを使用し、GitHub Pagesでサーバーなしで動作します。
 
-First, run the development server:
+## GitHub Pagesで公開する
 
-```bash
+1. この変更を `main` にマージします。
+2. **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に設定します。
+3. **Actions → Deploy to GitHub Pages → Run workflow** を実行します。以降は `main` へのpushで自動公開されます。
+
+公開先: https://miso-eg.github.io/limited-battle-roulette/
+
+PRではlintと静的ビルドのみ実行します。
+ルール一覧は `/limited-battle-roulette/rules/` で直接アクセス・再読み込みできます。
+
+## ローカル開発
+
+Node.js 22以降を使用してください。
+
+```sh
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000/ を開きます。Windowsでは `start.bat` でも起動できます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 静的ビルド
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```sh
+npm run lint
+npm run build
+```
 
-## Learn More
+`out/` にHTML・CSS・JavaScriptが出力されます。静的HTTPサーバーで配信してください。
+`next start` は静的エクスポートでは使用できません。
 
-To learn more about Next.js, take a look at the following resources:
+Pagesと同じパスでビルドする場合（PowerShell）:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```powershell
+$env:NEXT_PUBLIC_BASE_PATH = '/limited-battle-roulette'
+npm run build
+Remove-Item Env:NEXT_PUBLIC_BASE_PATH
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`NEXT_PUBLIC_BASE_PATH` はビルド時に埋め込まれます。別のリポジトリ名や独自ドメインで公開する場合は、
+`.github/workflows/pages.yml` の値を公開先に合わせて変更してください。ドメイン直下なら空文字にします。
 
-## Deploy on Vercel
+## ルールの更新
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`public/rules.csv` を編集して `main` にpushすると再ビルド・公開されます。
+既存ファイルと同じShift_JIS、列順 `id,category,title,description` を維持してください。
+カテゴリは「人縛り」「コイン縛り」「ギフト縛り」です。項目にカンマや改行を含めないでください。

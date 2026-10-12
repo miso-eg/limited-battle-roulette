@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 type RuleCategory = '人縛り' | 'コイン縛り' | 'ギフト縛り';
 
@@ -23,6 +24,24 @@ const categoryIcons: Record<RuleCategory, string> = {
   ギフト縛り: '🎁',
 };
 
+const parseCsv = (csvText: string): BattleRule[] => {
+  const lines = csvText.trim().split(/\r?\n/);
+  const dataLines = lines.slice(1);
+
+  return dataLines
+    .map((line) => {
+      const [id, category, title, description] = line.split(',');
+
+      return {
+        id: Number(id),
+        category: category as RuleCategory,
+        title,
+        description,
+      };
+    })
+    .filter((rule) => rule.id && rule.category && rule.title);
+};
+
 export default function RulesPage() {
   const [rules, setRules] = useState<BattleRule[]>([]);
   const [error, setError] = useState('');
@@ -30,7 +49,7 @@ export default function RulesPage() {
   useEffect(() => {
     const loadRules = async () => {
       try {
-        const response = await fetch('/rules.csv');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/rules.csv`);
 
         if (!response.ok) {
           throw new Error();
@@ -49,23 +68,7 @@ export default function RulesPage() {
     loadRules();
   }, []);
 
-  const parseCsv = (csvText: string): BattleRule[] => {
-    const lines = csvText.trim().split(/\r?\n/);
-    const dataLines = lines.slice(1);
 
-    return dataLines
-      .map((line) => {
-        const [id, category, title, description] = line.split(',');
-
-        return {
-          id: Number(id),
-          category: category as RuleCategory,
-          title,
-          description,
-        };
-      })
-      .filter((rule) => rule.id && rule.category && rule.title);
-  };
 
   return (
     <main className="min-h-screen bg-zinc-950 px-4 py-8 text-white">
@@ -76,12 +79,12 @@ export default function RulesPage() {
         </header>
 
         <div className="mb-5 text-center">
-          <a
+          <Link
             href="/"
             className="inline-block rounded-xl bg-white px-4 py-2 font-bold text-zinc-950"
           >
             抽選ページへ戻る
-          </a>
+          </Link>
         </div>
 
         {error && (

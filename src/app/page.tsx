@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 type RuleCategory = '人縛り' | 'コイン縛り' | 'ギフト縛り';
 
@@ -30,6 +31,24 @@ const categoryIcons: Record<RuleCategory, string> = {
   ギフト縛り: '🎁',
 };
 
+const parseCsv = (csvText: string): BattleRule[] => {
+  const lines = csvText.trim().split(/\r?\n/);
+  const dataLines = lines.slice(1);
+
+  return dataLines
+    .map((line) => {
+      const [id, category, title, description] = line.split(',');
+
+      return {
+        id: Number(id),
+        category: category as RuleCategory,
+        title,
+        description,
+      };
+    })
+    .filter((rule) => rule.id && rule.category && rule.title);
+};
+
 export default function Home() {
   const [rules, setRules] = useState<BattleRule[]>([]);
   const [category, setCategory] = useState<CategoryFilter>('すべて');
@@ -41,7 +60,7 @@ export default function Home() {
   useEffect(() => {
     const loadRules = async () => {
       try {
-        const response = await fetch('/rules.csv');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/rules.csv`);
 
         if (!response.ok) {
           throw new Error();
@@ -60,23 +79,7 @@ export default function Home() {
     loadRules();
   }, []);
 
-  const parseCsv = (csvText: string): BattleRule[] => {
-    const lines = csvText.trim().split(/\r?\n/);
-    const dataLines = lines.slice(1);
 
-    return dataLines
-      .map((line) => {
-        const [id, category, title, description] = line.split(',');
-
-        return {
-          id: Number(id),
-          category: category as RuleCategory,
-          title,
-          description,
-        };
-      })
-      .filter((rule) => rule.id && rule.category && rule.title);
-  };
 
   const getFilteredRules = () => {
     return category === 'すべて'
@@ -209,12 +212,12 @@ export default function Home() {
             {isRolling ? '抽選中...' : '抽選する'}
           </button>
 
-          <a
+          <Link
             href="/rules"
             className="mt-3 block text-center text-sm text-zinc-400 underline"
           >
             登録ルール一覧を見る
-          </a>
+          </Link>
 
           {error && (
             <p className="mt-4 rounded-xl bg-red-500/20 p-3 text-sm text-red-200">
