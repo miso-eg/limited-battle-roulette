@@ -358,9 +358,9 @@ export default function Home() {
           </h2>
 
           <p className="mt-3 leading-7">
-            みそ🎨🐾 @miso_eg ※TikTok
+            みそ X @_miso_eg
             <br />
-            上記アカウントのDM or 投稿コメントまで
+            上記アカウントのDMまたは投稿への返信まで
           </p>
         </section>
       </div>
